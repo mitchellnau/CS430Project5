@@ -29,10 +29,10 @@ typedef struct
 
 const Vertex Vertices[] =
 {
-    {{1, -1, 0}, {1, 0, 0, 1}, {1,1}},
-    {{1, 1, 0}, {0, 1, 0, 1}, {1,0}},
-    {{-1, 1, 0}, {0, 0, 1, 1}, {0,0}},
-    {{-1, -1, 0}, {0, 0, 0, 1}, {0,1}}
+    {{0.5, -0.5, 0}, {1, 0, 0, 1}, {1,1}},
+    {{0.5, 0.5, 0}, {0, 1, 0, 1}, {1,0}},
+    {{-0.5, 0.5, 0}, {0, 0, 1, 1}, {0,0}},
+    {{-0.5, -0.5, 0}, {0, 0, 0, 1}, {0,1}}
 };
 
 
@@ -197,6 +197,14 @@ int simple_program()
     GLint vertex_shader = simple_shader(GL_VERTEX_SHADER, vertex_shader_src);
     GLint fragment_shader = simple_shader(GL_FRAGMENT_SHADER, fragment_shader_src);
 
+
+
+    GLint texCoordSlot = glGetAttribLocation(program_id, "TexCoordIn");
+    glEnableVertexAttribArray(texCoordSlot);
+    GLint textureUniform = glGetUniformLocation(program_id, "Texture");
+
+
+
     glAttachShader(program_id, vertex_shader);
     glAttachShader(program_id, fragment_shader);
 
@@ -272,6 +280,16 @@ int main(int argc, char* argv[])
 
     glfwMakeContextCurrent(window);
 
+
+    GLuint myTexture;
+    glGenTextures(1, &myTexture);
+    glBindTexture(GL_TEXTURE_2D, myTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+
+
     program_id = simple_program();
 
     glUseProgram(program_id);
@@ -298,7 +316,7 @@ int main(int argc, char* argv[])
     while (!glfwWindowShouldClose(window))
     {
 
-        glClearColor(0, 0.0/255.0, 0.0/255.0, 1.0);
+        glClearColor(255.0/255.0, 20.0/255.0, 147.0/255.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glViewport(0, 0, 640, 480);
