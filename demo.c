@@ -29,10 +29,10 @@ typedef struct
 
 const Vertex Vertices[] =
 {
-    {{0.5, -0.5, 0}, {1, 0, 0, 1}, {1,1}},
-    {{0.5, 0.5, 0}, {0, 1, 0, 1}, {1,0}},
-    {{-0.5, 0.5, 0}, {0, 0, 1, 1}, {0,0}},
-    {{-0.5, -0.5, 0}, {0, 0, 0, 1}, {0,1}}
+    {{0.5, -0.5, 0}, {1, 0, 0, 1}, {1,0}},
+    {{0.5, 0.5, 0}, {0, 1, 0, 1}, {1,1}},
+    {{-0.5, 0.5, 0}, {0, 0, 1, 1}, {0,1}},
+    {{-0.5, -0.5, 0}, {0, 0, 0, 1}, {0,0}}
 };
 
 
@@ -199,10 +199,6 @@ int simple_program()
 
 
 
-    GLint texCoordSlot = glGetAttribLocation(program_id, "TexCoordIn");
-    glEnableVertexAttribArray(texCoordSlot);
-    GLint textureUniform = glGetUniformLocation(program_id, "Texture");
-
 
 
     glAttachShader(program_id, vertex_shader);
@@ -299,6 +295,18 @@ int main(int argc, char* argv[])
     glEnableVertexAttribArray(position_slot);
     glEnableVertexAttribArray(color_slot);
 
+
+
+
+    GLint texCoordSlot = glGetAttribLocation(program_id, "TexCoordIn");
+    glEnableVertexAttribArray(texCoordSlot);
+    GLint textureUniform = glGetUniformLocation(program_id, "Texture");
+
+
+
+
+
+
     // Create Buffer
     glGenBuffers(1, &vertex_buffer);
 
@@ -334,6 +342,11 @@ int main(int argc, char* argv[])
                               GL_FALSE,
                               sizeof(Vertex),
                               (GLvoid*) (sizeof(float) * 3));
+
+        glVertexAttribPointer(texCoordSlot, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), sizeof(float)*7);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, myTexture);
+        glUniform1i(textureUniform, 0);
 
         glDrawElements(GL_TRIANGLES,
                        sizeof(Indices) / sizeof(GLubyte),
