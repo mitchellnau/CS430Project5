@@ -23,15 +23,16 @@ typedef struct
 {
     float position[3];
     float color[4];
+    float textcoord[2];
 } Vertex;
 
 
 const Vertex Vertices[] =
 {
-    {{1, -1, 0}, {1, 0, 0, 1}},
-    {{1, 1, 0}, {0, 1, 0, 1}},
-    {{-1, 1, 0}, {0, 0, 1, 1}},
-    {{-1, -1, 0}, {0, 0, 0, 1}}
+    {{1, -1, 0}, {1, 0, 0, 1}, {1,1}},
+    {{1, 1, 0}, {0, 1, 0, 1}, {1,0}},
+    {{-1, 1, 0}, {0, 0, 1, 1}, {0,0}},
+    {{-1, -1, 0}, {0, 0, 0, 1}, {0,1}}
 };
 
 
@@ -46,12 +47,13 @@ char* vertex_shader_src =
     "attribute vec4 Position;\n"
     "attribute vec4 SourceColor;\n"
     "\n"
-    //"attribute vec2 TexCoordIn;\n"
-    //"varying vec2 TexCoordOut;\n"
+    "attribute vec2 TexCoordIn;\n"
+    "varying lowp vec2 TexCoordOut;\n"
     "\n"
-    "varying vec4 DestinationColor;\n"
+    "varying lowp vec4 DestinationColor;\n"
     "\n"
     "void main(void) {\n"
+    "    TexCoordOut = TexCoordIn;\n"
     "    DestinationColor = SourceColor;\n"
     "    gl_Position = Position;\n"
     "}\n";
@@ -60,11 +62,11 @@ char* vertex_shader_src =
 char* fragment_shader_src =
     "varying lowp vec4 DestinationColor;\n"
     "\n"
-//  "varying vec2 TexCoordOut;\n"
-//  "uniform sampler2D Texture;\n"
+    "varying lowp vec2 TexCoordOut;\n"
+    "uniform sampler2D Texture;\n"
     "\n"
     "void main(void) {\n"
-    "    gl_FragColor = DestinationColor;\n"
+    "    gl_FragColor = texture2D(Texture, TexCoordOut);\n"
     "}\n";
 
 
@@ -85,7 +87,7 @@ GLint simple_shader(GLint shader_type, char* shader_src)
     {
         GLchar message[256];
         glGetShaderInfoLog(shader_id, sizeof(message), 0, &message[0]);
-        printf("glCompileShader Error: %s\n", message);
+        printf("glCompileShader Error: %s %s\n", shader_src, message);
         exit(1);
     }
 
@@ -257,7 +259,7 @@ int main(int argc, char* argv[])
     // Create and open a window
     window = glfwCreateWindow(640,
                               480,
-                              "Hello World",
+                              "Mitchell Hewitt Project 5",
                               NULL,
                               NULL);
 
@@ -296,7 +298,7 @@ int main(int argc, char* argv[])
     while (!glfwWindowShouldClose(window))
     {
 
-        glClearColor(0, 104.0/255.0, 55.0/255.0, 1.0);
+        glClearColor(0, 0.0/255.0, 0.0/255.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glViewport(0, 0, 640, 480);
