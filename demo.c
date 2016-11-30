@@ -263,6 +263,22 @@ void rotateImage(int direction)
     }
 }
 
+void scaleImage(int direction)
+{
+    switch(direction)
+    {
+        case 0:
+            printf("You pressed A key.\n");
+            break;
+        case 1:
+            printf("You pressed S key.\n");
+            break;
+        default:
+            printf("Something went wrong when trying to scale.\n");
+            break;
+    }
+}
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
@@ -277,6 +293,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         rotateImage(0);
     else if (key == GLFW_KEY_W && action == GLFW_PRESS)
         rotateImage(1);
+    else if (key == GLFW_KEY_A && action == GLFW_PRESS)
+        scaleImage(0);
+    else if (key == GLFW_KEY_S && action == GLFW_PRESS)
+        scaleImage(1);
 }
 
 int main(int argc, char* argv[])
