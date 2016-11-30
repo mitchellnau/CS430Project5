@@ -279,6 +279,22 @@ void scaleImage(int direction)
     }
 }
 
+void shearImage(int direction)
+{
+    switch(direction)
+    {
+        case 0:
+            printf("You pressed Z key.\n");
+            break;
+        case 1:
+            printf("You pressed X key.\n");
+            break;
+        default:
+            printf("Something went wrong when trying to shear.\n");
+            break;
+    }
+}
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
@@ -297,6 +313,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         scaleImage(0);
     else if (key == GLFW_KEY_S && action == GLFW_PRESS)
         scaleImage(1);
+    else if (key == GLFW_KEY_Z && action == GLFW_PRESS)
+        shearImage(0);
+    else if (key == GLFW_KEY_X && action == GLFW_PRESS)
+        shearImage(1);
 }
 
 int main(int argc, char* argv[])
