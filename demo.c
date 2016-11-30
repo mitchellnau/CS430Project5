@@ -29,10 +29,10 @@ typedef struct
 
 const Vertex Vertices[] =
 {
-    {{0.5, -0.5, 0}, {1, 0, 0, 1}, {1,0}},
-    {{0.5, 0.5, 0}, {0, 1, 0, 1}, {1,1}},
-    {{-0.5, 0.5, 0}, {0, 0, 1, 1}, {0,1}},
-    {{-0.5, -0.5, 0}, {0, 0, 0, 1}, {0,0}}
+    {{1, -1, 0},  {1, 0, 0, 1}, {1,1}},
+    {{1, 1, 0},   {0, 1, 0, 1}, {1,0}},
+    {{-1, 1, 0},  {0, 0, 1, 1}, {0,0}},
+    {{-1, -1, 0}, {0, 0, 0, 1}, {0,1}}
 };
 
 
@@ -157,7 +157,7 @@ int read_p3(Pixel* image){
   int i;
   unsigned char check;
   char number[5];
-  for(i=0; i < width*height ; i++){ //for as many pixels in the image
+  for(i=0; i < width*height; i++){ //for as many pixels in the image
     Pixel temp;         //create a temporary pixel struct
 
     fgets(number, 10, inputfp); //get the red value
@@ -247,6 +247,22 @@ void pan(int direction)
     }
 }
 
+void rotateImage(int direction)
+{
+    switch(direction)
+    {
+        case 0:
+            printf("You pressed Q key.\n");
+            break;
+        case 1:
+            printf("You pressed W key.\n");
+            break;
+        default:
+            printf("Something went wrong when trying to rotate.\n");
+            break;
+    }
+}
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
@@ -257,6 +273,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         pan(2);
     else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
         pan(3);
+    else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+        rotateImage(0);
+    else if (key == GLFW_KEY_W && action == GLFW_PRESS)
+        rotateImage(1);
 }
 
 int main(int argc, char* argv[])
@@ -274,8 +294,9 @@ int main(int argc, char* argv[])
     }
     read_header('3'); //read the header of a P3 file
     Pixel* data = malloc(sizeof(Pixel)*width*height*3); //allocate memory to hold all of the pixel data
-    read_p3(&data[0]);
     printf("width: %d\nheight: %d\n", width, height);
+    read_p3(&data[0]);
+    printf("over \n");
 
     GLint program_id, position_slot, color_slot;
     GLuint vertex_buffer;
@@ -310,13 +331,13 @@ int main(int argc, char* argv[])
     glfwMakeContextCurrent(window);
 
 
+
     GLuint myTexture;
     glGenTextures(1, &myTexture);
     glBindTexture(GL_TEXTURE_2D, myTexture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D,
-                 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-
+                 0, GL_RGB, width*3, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 
 
     program_id = simple_program();
@@ -329,15 +350,9 @@ int main(int argc, char* argv[])
     glEnableVertexAttribArray(color_slot);
 
 
-
-
     GLint texCoordSlot = glGetAttribLocation(program_id, "TexCoordIn");
     glEnableVertexAttribArray(texCoordSlot);
     GLint textureUniform = glGetUniformLocation(program_id, "Texture");
-
-
-
-
 
 
     // Create Buffer
@@ -380,7 +395,6 @@ int main(int argc, char* argv[])
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, myTexture);
         glUniform1i(textureUniform, 0);
-
         glDrawElements(GL_TRIANGLES,
                        sizeof(Indices) / sizeof(GLubyte),
                        GL_UNSIGNED_BYTE, 0);
