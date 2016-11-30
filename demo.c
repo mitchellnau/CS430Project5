@@ -225,6 +225,39 @@ static void error_callback(int error, const char* description)
     fputs(description, stderr);
 }
 
+void pan(int direction)
+{
+    switch(direction)
+    {
+        case 0:
+            printf("You pressed right arrow key.\n");
+            break;
+        case 1:
+            printf("You pressed left arrow key.\n");
+            break;
+        case 2:
+            printf("You pressed up arrow key.\n");
+            break;
+        case 3:
+            printf("You pressed down arrow key.\n");
+            break;
+        default:
+            printf("Something went wrong when trying to pan.\n");
+            break;
+    }
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
+        pan(0);
+    else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
+        pan(1);
+    else if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+        pan(2);
+    else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
+        pan(3);
+}
 
 int main(int argc, char* argv[])
 {
@@ -353,6 +386,7 @@ int main(int argc, char* argv[])
                        GL_UNSIGNED_BYTE, 0);
 
         glfwSwapBuffers(window);
+        glfwSetKeyCallback(window, key_callback);
         glfwPollEvents();
     }
 
