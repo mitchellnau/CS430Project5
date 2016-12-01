@@ -27,7 +27,7 @@ typedef struct
 } Vertex;
 
 
-const Vertex Vertices[] =
+Vertex Vertices[] =
 {
     {{1, -1, 0},  {1, 0, 0, 1}, {1,1}},
     {{1, 1, 0},   {0, 1, 0, 1}, {1,0}},
@@ -229,15 +229,31 @@ void pan(int direction)
     {
         case 0:
             printf("You pressed right arrow key.\n");
+            Vertices[0].position[0] += 0.1;
+            Vertices[1].position[0] += 0.1;
+            Vertices[2].position[0] += 0.1;
+            Vertices[3].position[0] += 0.1;
             break;
         case 1:
             printf("You pressed left arrow key.\n");
+            Vertices[0].position[0] -= 0.1;
+            Vertices[1].position[0] -= 0.1;
+            Vertices[2].position[0] -= 0.1;
+            Vertices[3].position[0] -= 0.1;
             break;
         case 2:
             printf("You pressed up arrow key.\n");
+            Vertices[0].position[1] += 0.1;
+            Vertices[1].position[1] += 0.1;
+            Vertices[2].position[1] += 0.1;
+            Vertices[3].position[1] += 0.1;
             break;
         case 3:
             printf("You pressed down arrow key.\n");
+            Vertices[0].position[1] -= 0.1;
+            Vertices[1].position[1] -= 0.1;
+            Vertices[2].position[1] -= 0.1;
+            Vertices[3].position[1] -= 0.1;
             break;
         default:
             printf("Something went wrong when trying to pan.\n");
@@ -414,6 +430,8 @@ int main(int argc, char* argv[])
     // Repeat
     while (!glfwWindowShouldClose(window))
     {
+
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 
         glClearColor(255.0/255.0, 20.0/255.0, 147.0/255.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
