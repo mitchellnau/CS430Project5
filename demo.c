@@ -315,6 +315,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         shearImage(0);
     else if (key == GLFW_KEY_X && action == GLFW_PRESS)
         shearImage(1);
+    else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
+        printf("closing...");
+        exit(EXIT_SUCCESS);
+    }
 }
 
 int main(int argc, char* argv[])
