@@ -158,32 +158,30 @@ int read_p3(Pixel* image){
   unsigned char check;
   char number[5];
   for(i=0; i < width*height; i++){ //for as many pixels in the image
-    Pixel temp;         //create a temporary pixel struct
 
     fgets(number, 10, inputfp); //get the red value
-    check = atoi(number);       //store it in an intermediate variable
+    check = (char)atoi(number);       //store it in an intermediate variable
     if(check > maxcv){          //check to see if the color value is compliant with the max color value
       fprintf(stderr, "Error: Color value exceeds limit.\n", 006);
       exit(1);                  //exit the program if the image's pixels don't comply with the max color value
     }
-    temp.r = check;             //store it in the temporary pixel
+    image[i].r = check;
 
     fgets(number, 10, inputfp); //get the green value
-    check = atoi(number);       //store it in an intermediate variable
+    check = (char)atoi(number);       //store it in an intermediate variable
     if(check > maxcv){          //check to see if the color value is compliant with the max color value
       fprintf(stderr, "Error: Color value exceeds limit.\n", 006);
       exit(1);                  //exit the program if the image's pixels don't comply with the max color value
     }
-    temp.g = check;             //store it in the temporary pixel
+    image[i].g = check;
 
     fgets(number, 10, inputfp); //get the blue value
-    check = atoi(number);       //store it in an intermediate variable
+    check = (char)atoi(number);       //store it in an intermediate variable
     if(check > maxcv){          //check to see if the color value is compliant with the max color value
       fprintf(stderr, "Error: Color value exceeds limit.\n", 006);
       exit(1);                  //exit the program if the image's pixels don't comply with the max color value
     }
-    temp.b = check;             //store it in the temporary pixel
-    *(image+i*sizeof(Pixel)) = temp; //store the temporary pixel in the dynamically allocated memory
+    image[i].b = check;
   }
   return 1;
 }
@@ -333,7 +331,7 @@ int main(int argc, char* argv[])
         exit(1); //if the file cannot be opened, exit the program
     }
     read_header('3'); //read the header of a P3 file
-    Pixel* data = malloc(sizeof(Pixel)*width*height*3); //allocate memory to hold all of the pixel data
+    Pixel* data = calloc(width*height, sizeof(Pixel*)); //allocate memory to hold all of the pixel data
     printf("width: %d\nheight: %d\n", width, height);
     read_p3(&data[0]);
     printf("over \n");
@@ -377,7 +375,7 @@ int main(int argc, char* argv[])
     glBindTexture(GL_TEXTURE_2D, myTexture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D,
-                 0, GL_RGB, width*3, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+                 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 
 
     program_id = simple_program();
