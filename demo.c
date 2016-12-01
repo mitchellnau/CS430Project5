@@ -352,6 +352,18 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         printf("closing...");
         exit(EXIT_SUCCESS);
     }
+    else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+    {
+        printf("Resetting vertices...");
+        Vertices[0].position[0] = 1;
+        Vertices[0].position[1] = -1;
+        Vertices[1].position[0] = 1;
+        Vertices[1].position[1] = 1;
+        Vertices[2].position[0] = -1;
+        Vertices[2].position[1] = 1;
+        Vertices[3].position[0] = -1;
+        Vertices[3].position[1] = -1;
+    }
 }
 
 int main(int argc, char* argv[])
