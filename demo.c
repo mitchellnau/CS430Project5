@@ -283,9 +283,25 @@ void scaleImage(int direction)
     {
         case 0:
             printf("You pressed A key.\n");
+            Vertices[0].position[0] *= 1.1;
+            Vertices[0].position[1] *= 1.1;
+            Vertices[1].position[0] *= 1.1;
+            Vertices[1].position[1] *= 1.1;
+            Vertices[2].position[0] *= 1.1;
+            Vertices[2].position[1] *= 1.1;
+            Vertices[3].position[0] *= 1.1;
+            Vertices[3].position[1] *= 1.1;
             break;
         case 1:
             printf("You pressed S key.\n");
+            Vertices[0].position[0] *= 1/1.1;
+            Vertices[0].position[1] *= 1/1.1;
+            Vertices[1].position[0] *= 1/1.1;
+            Vertices[1].position[1] *= 1/1.1;
+            Vertices[2].position[0] *= 1/1.1;
+            Vertices[2].position[1] *= 1/1.1;
+            Vertices[3].position[0] *= 1/1.1;
+            Vertices[3].position[1] *= 1/1.1;
             break;
         default:
             printf("Something went wrong when trying to scale.\n");
