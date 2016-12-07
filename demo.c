@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 //data type to store pixel rgb values
 typedef struct Pixel {
@@ -350,6 +351,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
         printf("closing...");
+        glfwTerminate();
         exit(EXIT_SUCCESS);
     }
     else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
@@ -433,13 +435,17 @@ int main(int argc, char* argv[])
 
     position_slot = glGetAttribLocation(program_id, "Position");
     color_slot = glGetAttribLocation(program_id, "SourceColor");
+    assert(position_slot != -1);
+    assert(color_slot != -1);
     glEnableVertexAttribArray(position_slot);
     glEnableVertexAttribArray(color_slot);
 
 
     GLint texCoordSlot = glGetAttribLocation(program_id, "TexCoordIn");
+    assert(texCoordSlot != -1);
     glEnableVertexAttribArray(texCoordSlot);
     GLint textureUniform = glGetUniformLocation(program_id, "Texture");
+    assert(textureUniform != -1);
 
 
     // Create Buffer
