@@ -30,10 +30,10 @@ typedef struct
 
 Vertex Vertices[] =
 {
-    {{1, -1, 0},  {1, 0, 0, 1}, {1,1}},
-    {{1, 1, 0},   {0, 1, 0, 1}, {1,0}},
+    {{1, -1, 0},  {1, 0, 0, 1}, {0.99999,0.99999}},
+    {{1, 1, 0},   {0, 1, 0, 1}, {0.99999,0}},
     {{-1, 1, 0},  {0, 0, 1, 1}, {0,0}},
-    {{-1, -1, 0}, {0, 0, 0, 1}, {0,1}}
+    {{-1, -1, 0}, {0, 0, 0, 1}, {0,0.99999}}
 };
 
 
@@ -429,6 +429,7 @@ int main(int argc, char* argv[])
     glGenTextures(1, &myTexture);
     glBindTexture(GL_TEXTURE_2D, myTexture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D,
                  0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 
