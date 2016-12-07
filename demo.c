@@ -315,10 +315,14 @@ void shearImage(int direction)
     switch(direction)
     {
         case 0:
-            printf("You pressed Z key.\n");
+            printf("You pressed X key.\n");
+            Vertices[2].position[0] += 0.1;
+            Vertices[1].position[0] += 0.1;
             break;
         case 1:
-            printf("You pressed X key.\n");
+            printf("You pressed Z key.\n");
+            Vertices[2].position[0] -= 0.1;
+            Vertices[1].position[0] -= 0.1;
             break;
         default:
             printf("Something went wrong when trying to shear.\n");
