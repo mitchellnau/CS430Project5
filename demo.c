@@ -1,4 +1,5 @@
 #define GLFW_DLL 1
+#define PI 3.14159265358979323846
 
 #define GL_GLEXT_PROTOTYPES
 #include <GLES2/gl2.h>
@@ -7,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <assert.h>
 
 //data type to store pixel rgb values
@@ -262,15 +264,72 @@ void pan(int direction)
     }
 }
 
+typedef float* V3;
+static inline float v3_dot(V3 a, V3 b)
+{
+    return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+}
+
 void rotateImage(int direction)
 {
+    float theta = 22.5*(PI/180);
+    float x, y;
+    float rotationMatrixColA[3] = {cos(theta), sin(theta), 0};
+    float rotationMatrixColB[3] = {-sin(theta), cos(theta), 0};
+
+
     switch(direction)
     {
         case 0:
             printf("You pressed Q key.\n");
+            x = v3_dot(Vertices[0].position, rotationMatrixColA);
+            y = v3_dot(Vertices[0].position, rotationMatrixColB);
+            Vertices[0].position[0] = x;
+            Vertices[0].position[1] = y;
+
+            x = v3_dot(Vertices[1].position, rotationMatrixColA);
+            y = v3_dot(Vertices[1].position, rotationMatrixColB);
+            Vertices[1].position[0] = x;
+            Vertices[1].position[1] = y;
+
+            x = v3_dot(Vertices[2].position, rotationMatrixColA);
+            y = v3_dot(Vertices[2].position, rotationMatrixColB);
+            Vertices[2].position[0] = x;
+            Vertices[2].position[1] = y;
+
+            x = v3_dot(Vertices[3].position, rotationMatrixColA);
+            y = v3_dot(Vertices[3].position, rotationMatrixColB);
+            Vertices[3].position[0] = x;
+            Vertices[3].position[1] = y;
+
             break;
         case 1:
             printf("You pressed W key.\n");
+            theta = -theta;
+            rotationMatrixColA[0] = cos(theta);
+            rotationMatrixColA[1] = sin(theta);
+            rotationMatrixColB[0] = -sin(theta);
+            rotationMatrixColB[1] = cos(theta);
+
+            x = v3_dot(Vertices[0].position, rotationMatrixColA);
+            y = v3_dot(Vertices[0].position, rotationMatrixColB);
+            Vertices[0].position[0] = x;
+            Vertices[0].position[1] = y;
+
+            x = v3_dot(Vertices[1].position, rotationMatrixColA);
+            y = v3_dot(Vertices[1].position, rotationMatrixColB);
+            Vertices[1].position[0] = x;
+            Vertices[1].position[1] = y;
+
+            x = v3_dot(Vertices[2].position, rotationMatrixColA);
+            y = v3_dot(Vertices[2].position, rotationMatrixColB);
+            Vertices[2].position[0] = x;
+            Vertices[2].position[1] = y;
+
+            x = v3_dot(Vertices[3].position, rotationMatrixColA);
+            y = v3_dot(Vertices[3].position, rotationMatrixColB);
+            Vertices[3].position[0] = x;
+            Vertices[3].position[1] = y;
             break;
         default:
             printf("Something went wrong when trying to rotate.\n");
@@ -341,9 +400,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
         pan(3);
     else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
-        rotateImage(0);
-    else if (key == GLFW_KEY_W && action == GLFW_PRESS)
         rotateImage(1);
+    else if (key == GLFW_KEY_W && action == GLFW_PRESS)
+        rotateImage(0);
     else if (key == GLFW_KEY_A && action == GLFW_PRESS)
         scaleImage(0);
     else if (key == GLFW_KEY_S && action == GLFW_PRESS)
