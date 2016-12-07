@@ -1,5 +1,7 @@
 #define GLFW_DLL 1
 #define PI 3.14159265358979323846
+#define WINDOW_WIDTH 500
+#define WINDOW_HEIGHT 500
 
 #define GL_GLEXT_PROTOTYPES
 #include <GLES2/gl2.h>
@@ -467,8 +469,8 @@ int main(int argc, char* argv[])
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
     // Create and open a window
-    window = glfwCreateWindow(640,
-                              480,
+    window = glfwCreateWindow(WINDOW_WIDTH,
+                              WINDOW_HEIGHT,
                               "Mitchell Hewitt Project 5",
                               NULL,
                               NULL);
@@ -534,7 +536,7 @@ int main(int argc, char* argv[])
         glClearColor(255.0/255.0, 20.0/255.0, 147.0/255.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glViewport(0, 0, 640, 480);
+        glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         glVertexAttribPointer(position_slot,
                               3,
