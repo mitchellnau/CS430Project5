@@ -51,3 +51,6 @@ Temporary Items
 libEGL.exp
 *.pdb
 libGLESv2.exp
+demo.exe
+demo.obj
+input - Copy.ppm
