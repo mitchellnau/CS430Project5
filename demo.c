@@ -283,7 +283,7 @@ void rotateImage(int direction)
     switch(direction)
     {
         case 0:
-            printf("You pressed Q key.\n");
+            printf("You pressed W key.\n");
             x = v3_dot(Vertices[0].position, rotationMatrixColA);
             y = v3_dot(Vertices[0].position, rotationMatrixColB);
             Vertices[0].position[0] = x;
@@ -306,7 +306,7 @@ void rotateImage(int direction)
 
             break;
         case 1:
-            printf("You pressed W key.\n");
+            printf("You pressed Q key.\n");
             theta = -theta;
             rotationMatrixColA[0] = cos(theta);
             rotationMatrixColA[1] = sin(theta);
