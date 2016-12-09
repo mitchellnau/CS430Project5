@@ -1,4 +1,5 @@
 This program was made by Mitchell Hewitt for CS430 Computer Graphics (Section 1), Project 5 - Image Viewer, in Fall 2016
+It is an extension of the demo.c file by Dr. James Palmer at https://bitbucket.org/jdpalmer/gles2-starter-kit
 This program reads in an input P3 .ppm file.  
 It stores the image's data and maps that image data to two triangles made of four vertices.
 These two textured triangles are rendered, and the rendered triangles may be modified based on keyboard input.
@@ -45,7 +46,7 @@ If you would like to verify the texturing...
 	4.  Utilize the keyboard controls outlined above and verify they performed the transformations described above.
 	
 
-**NOTE** When I ran the program, the memory where the image's width was stored sometimes had an extra number not present 
+**NOTE:** When I ran the program, the memory where the image's width was stored sometimes had an extra number not present 
          in the image file.  Running and closing the program until this extra number is absent may be necessary.
 		 
 Invalid inputs and file contents will close the program.
