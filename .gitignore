@@ -54,3 +54,5 @@ libGLESv2.exp
 demo.exe
 demo.obj
 input - Copy.ppm
+ezview.exe
+ezview.obj
