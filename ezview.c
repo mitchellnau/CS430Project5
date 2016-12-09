@@ -14,8 +14,9 @@
 #include <assert.h>
 
 //data type to store pixel rgb values
-typedef struct Pixel {
-  unsigned char r, g, b;
+typedef struct Pixel
+{
+    unsigned char r, g, b;
 } Pixel;
 
 
@@ -100,95 +101,108 @@ GLint simple_shader(GLint shader_type, char* shader_src)
 }
 
 //This function reads the header data of the input file and stores the crucial parts into global variables for future use
-int read_header(char input){ //take in the p type (3 or 6) as a char
-  int i, line, endOfHeader, x;
-  char a, b;
-  char widthB[32], heightB[32], maxcvB[32]; //buffers to temporarily store the width, height, and max color value
-  char comment[64];                         //buffer to store the comment
+int read_header(char input)  //take in the p type (3 or 6) as a char
+{
+    int i, line, endOfHeader, x;
+    char a, b;
+    char widthB[32], heightB[32], maxcvB[32]; //buffers to temporarily store the width, height, and max color value
+    char comment[64];                         //buffer to store the comment
 
-  a = fgetc(inputfp); //get the first two chars of the file (P#)
-  b = fgetc(inputfp);
-  if(a != 'P' || b != input){  //check to see if the input number matches the function input and if the P is there
-    fprintf(stderr, "Error: Improper header filetype.\n", 005);
-    exit(1);                   //exit if the header is incorrect
-  }
-  a = fgetc(inputfp); //move past newline
-
-  a = fgetc(inputfp); //get the comment # OR the first digit of the width
-  if(a == '#'){       //if there is a comment, move past it
-    while(a != '\n'){ //move past comment with this loop
-        a = fgetc(inputfp);
+    a = fgetc(inputfp); //get the first two chars of the file (P#)
+    b = fgetc(inputfp);
+    if(a != 'P' || b != input)   //check to see if the input number matches the function input and if the P is there
+    {
+        fprintf(stderr, "Error: Improper header filetype.\n", 005);
+        exit(1);                   //exit if the header is incorrect
     }
-    a = fgetc(inputfp); //get the first digit of the width if there was a comment
-  }
+    a = fgetc(inputfp); //move past newline
+
+    a = fgetc(inputfp); //get the comment # OR the first digit of the width
+    if(a == '#')        //if there is a comment, move past it
+    {
+        while(a != '\n')  //move past comment with this loop
+        {
+            a = fgetc(inputfp);
+        }
+        a = fgetc(inputfp); //get the first digit of the width if there was a comment
+    }
 
 
-  i = 0;
-  while(a != ' '){ //get the rest of the width
-    widthB[i] = a; //store it in a buffer
-    a = fgetc(inputfp);
-    i++;
-  }
-  width = atoi(widthB); //convert the buffer to an integer and store it
+    i = 0;
+    while(a != ' ')  //get the rest of the width
+    {
+        widthB[i] = a; //store it in a buffer
+        a = fgetc(inputfp);
+        i++;
+    }
+    width = atoi(widthB); //convert the buffer to an integer and store it
 
 
-  a = fgetc(inputfp);  //get the first char of the height
-  i = 0;
-  while(a != '\n'){    //get the rest of the height
-    heightB[i] = a;    //store it in a buffer
-    a = fgetc(inputfp);
-    i++;
-  }
-  height = atoi(heightB); //convert the buffer to an integer and store it
+    a = fgetc(inputfp);  //get the first char of the height
+    i = 0;
+    while(a != '\n')     //get the rest of the height
+    {
+        heightB[i] = a;    //store it in a buffer
+        a = fgetc(inputfp);
+        i++;
+    }
+    height = atoi(heightB); //convert the buffer to an integer and store it
 
-  a = fgetc(inputfp);  //get the first char of the max color value
-  i = 0;
-  while(a != '\n'){    //get the rest of the max color value
-    maxcvB[i] = a;     //store it in a buffer
-    a = fgetc(inputfp);
-    i++;
-  }
-  maxcv = atoi(maxcvB); //convert the buffer to an integer and store it
-  if(maxcv != 255){          //check to see if the max color value is not 8 bits per channel
-    fprintf(stderr, "Error: Color value exceeds limit.\n", 007);
-    exit(1);              //exit the program if there isn't 8 bits per channel
-  }
+    a = fgetc(inputfp);  //get the first char of the max color value
+    i = 0;
+    while(a != '\n')     //get the rest of the max color value
+    {
+        maxcvB[i] = a;     //store it in a buffer
+        a = fgetc(inputfp);
+        i++;
+    }
+    maxcv = atoi(maxcvB); //convert the buffer to an integer and store it
+    if(maxcv != 255)           //check to see if the max color value is not 8 bits per channel
+    {
+        fprintf(stderr, "Error: Color value exceeds limit.\n", 007);
+        exit(1);              //exit the program if there isn't 8 bits per channel
+    }
 
-  return 1;
+    return 1;
 }
 
 //This function reads p3 data from an input file and stores it in dynamically allocated memory, a pointer to which is passed into the function.
-int read_p3(Pixel* image){
-  int i;
-  unsigned char check;
-  char number[5];
-  for(i=0; i < width*height; i++){ //for as many pixels in the image
+int read_p3(Pixel* image)
+{
+    int i;
+    unsigned char check;
+    char number[5];
+    for(i=0; i < width*height; i++)  //for as many pixels in the image
+    {
 
-    fgets(number, 10, inputfp); //get the red value
-    check = (char)atoi(number);       //store it in an intermediate variable
-    if(check > maxcv){          //check to see if the color value is compliant with the max color value
-      fprintf(stderr, "Error: Color value exceeds limit.\n", 006);
-      exit(1);                  //exit the program if the image's pixels don't comply with the max color value
-    }
-    image[i].r = check;
+        fgets(number, 10, inputfp); //get the red value
+        check = (char)atoi(number);       //store it in an intermediate variable
+        if(check > maxcv)           //check to see if the color value is compliant with the max color value
+        {
+            fprintf(stderr, "Error: Color value exceeds limit.\n", 006);
+            exit(1);                  //exit the program if the image's pixels don't comply with the max color value
+        }
+        image[i].r = check;
 
-    fgets(number, 10, inputfp); //get the green value
-    check = (char)atoi(number);       //store it in an intermediate variable
-    if(check > maxcv){          //check to see if the color value is compliant with the max color value
-      fprintf(stderr, "Error: Color value exceeds limit.\n", 006);
-      exit(1);                  //exit the program if the image's pixels don't comply with the max color value
-    }
-    image[i].g = check;
+        fgets(number, 10, inputfp); //get the green value
+        check = (char)atoi(number);       //store it in an intermediate variable
+        if(check > maxcv)           //check to see if the color value is compliant with the max color value
+        {
+            fprintf(stderr, "Error: Color value exceeds limit.\n", 006);
+            exit(1);                  //exit the program if the image's pixels don't comply with the max color value
+        }
+        image[i].g = check;
 
-    fgets(number, 10, inputfp); //get the blue value
-    check = (char)atoi(number);       //store it in an intermediate variable
-    if(check > maxcv){          //check to see if the color value is compliant with the max color value
-      fprintf(stderr, "Error: Color value exceeds limit.\n", 006);
-      exit(1);                  //exit the program if the image's pixels don't comply with the max color value
+        fgets(number, 10, inputfp); //get the blue value
+        check = (char)atoi(number);       //store it in an intermediate variable
+        if(check > maxcv)           //check to see if the color value is compliant with the max color value
+        {
+            fprintf(stderr, "Error: Color value exceeds limit.\n", 006);
+            exit(1);                  //exit the program if the image's pixels don't comply with the max color value
+        }
+        image[i].b = check;
     }
-    image[i].b = check;
-  }
-  return 1;
+    return 1;
 }
 
 int simple_program()
@@ -232,37 +246,37 @@ void pan(int direction)
 {
     switch(direction)
     {
-        case 0:
-            printf("You pressed right arrow key.\n");
-            Vertices[0].position[0] += 0.1;
-            Vertices[1].position[0] += 0.1;
-            Vertices[2].position[0] += 0.1;
-            Vertices[3].position[0] += 0.1;
-            break;
-        case 1:
-            printf("You pressed left arrow key.\n");
-            Vertices[0].position[0] -= 0.1;
-            Vertices[1].position[0] -= 0.1;
-            Vertices[2].position[0] -= 0.1;
-            Vertices[3].position[0] -= 0.1;
-            break;
-        case 2:
-            printf("You pressed up arrow key.\n");
-            Vertices[0].position[1] += 0.1;
-            Vertices[1].position[1] += 0.1;
-            Vertices[2].position[1] += 0.1;
-            Vertices[3].position[1] += 0.1;
-            break;
-        case 3:
-            printf("You pressed down arrow key.\n");
-            Vertices[0].position[1] -= 0.1;
-            Vertices[1].position[1] -= 0.1;
-            Vertices[2].position[1] -= 0.1;
-            Vertices[3].position[1] -= 0.1;
-            break;
-        default:
-            printf("Something went wrong when trying to pan.\n");
-            break;
+    case 0:
+        printf("You pressed right arrow key.\n");
+        Vertices[0].position[0] += 0.1;
+        Vertices[1].position[0] += 0.1;
+        Vertices[2].position[0] += 0.1;
+        Vertices[3].position[0] += 0.1;
+        break;
+    case 1:
+        printf("You pressed left arrow key.\n");
+        Vertices[0].position[0] -= 0.1;
+        Vertices[1].position[0] -= 0.1;
+        Vertices[2].position[0] -= 0.1;
+        Vertices[3].position[0] -= 0.1;
+        break;
+    case 2:
+        printf("You pressed up arrow key.\n");
+        Vertices[0].position[1] += 0.1;
+        Vertices[1].position[1] += 0.1;
+        Vertices[2].position[1] += 0.1;
+        Vertices[3].position[1] += 0.1;
+        break;
+    case 3:
+        printf("You pressed down arrow key.\n");
+        Vertices[0].position[1] -= 0.1;
+        Vertices[1].position[1] -= 0.1;
+        Vertices[2].position[1] -= 0.1;
+        Vertices[3].position[1] -= 0.1;
+        break;
+    default:
+        printf("Something went wrong when trying to pan.\n");
+        break;
     }
 }
 
@@ -282,60 +296,60 @@ void rotateImage(int direction)
 
     switch(direction)
     {
-        case 0:
-            printf("You pressed W key.\n");
-            x = v3_dot(Vertices[0].position, rotationMatrixColA);
-            y = v3_dot(Vertices[0].position, rotationMatrixColB);
-            Vertices[0].position[0] = x;
-            Vertices[0].position[1] = y;
+    case 0:
+        printf("You pressed W key.\n");
+        x = v3_dot(Vertices[0].position, rotationMatrixColA);
+        y = v3_dot(Vertices[0].position, rotationMatrixColB);
+        Vertices[0].position[0] = x;
+        Vertices[0].position[1] = y;
 
-            x = v3_dot(Vertices[1].position, rotationMatrixColA);
-            y = v3_dot(Vertices[1].position, rotationMatrixColB);
-            Vertices[1].position[0] = x;
-            Vertices[1].position[1] = y;
+        x = v3_dot(Vertices[1].position, rotationMatrixColA);
+        y = v3_dot(Vertices[1].position, rotationMatrixColB);
+        Vertices[1].position[0] = x;
+        Vertices[1].position[1] = y;
 
-            x = v3_dot(Vertices[2].position, rotationMatrixColA);
-            y = v3_dot(Vertices[2].position, rotationMatrixColB);
-            Vertices[2].position[0] = x;
-            Vertices[2].position[1] = y;
+        x = v3_dot(Vertices[2].position, rotationMatrixColA);
+        y = v3_dot(Vertices[2].position, rotationMatrixColB);
+        Vertices[2].position[0] = x;
+        Vertices[2].position[1] = y;
 
-            x = v3_dot(Vertices[3].position, rotationMatrixColA);
-            y = v3_dot(Vertices[3].position, rotationMatrixColB);
-            Vertices[3].position[0] = x;
-            Vertices[3].position[1] = y;
+        x = v3_dot(Vertices[3].position, rotationMatrixColA);
+        y = v3_dot(Vertices[3].position, rotationMatrixColB);
+        Vertices[3].position[0] = x;
+        Vertices[3].position[1] = y;
 
-            break;
-        case 1:
-            printf("You pressed Q key.\n");
-            theta = -theta;
-            rotationMatrixColA[0] = cos(theta);
-            rotationMatrixColA[1] = sin(theta);
-            rotationMatrixColB[0] = -sin(theta);
-            rotationMatrixColB[1] = cos(theta);
+        break;
+    case 1:
+        printf("You pressed Q key.\n");
+        theta = -theta;
+        rotationMatrixColA[0] = cos(theta);
+        rotationMatrixColA[1] = sin(theta);
+        rotationMatrixColB[0] = -sin(theta);
+        rotationMatrixColB[1] = cos(theta);
 
-            x = v3_dot(Vertices[0].position, rotationMatrixColA);
-            y = v3_dot(Vertices[0].position, rotationMatrixColB);
-            Vertices[0].position[0] = x;
-            Vertices[0].position[1] = y;
+        x = v3_dot(Vertices[0].position, rotationMatrixColA);
+        y = v3_dot(Vertices[0].position, rotationMatrixColB);
+        Vertices[0].position[0] = x;
+        Vertices[0].position[1] = y;
 
-            x = v3_dot(Vertices[1].position, rotationMatrixColA);
-            y = v3_dot(Vertices[1].position, rotationMatrixColB);
-            Vertices[1].position[0] = x;
-            Vertices[1].position[1] = y;
+        x = v3_dot(Vertices[1].position, rotationMatrixColA);
+        y = v3_dot(Vertices[1].position, rotationMatrixColB);
+        Vertices[1].position[0] = x;
+        Vertices[1].position[1] = y;
 
-            x = v3_dot(Vertices[2].position, rotationMatrixColA);
-            y = v3_dot(Vertices[2].position, rotationMatrixColB);
-            Vertices[2].position[0] = x;
-            Vertices[2].position[1] = y;
+        x = v3_dot(Vertices[2].position, rotationMatrixColA);
+        y = v3_dot(Vertices[2].position, rotationMatrixColB);
+        Vertices[2].position[0] = x;
+        Vertices[2].position[1] = y;
 
-            x = v3_dot(Vertices[3].position, rotationMatrixColA);
-            y = v3_dot(Vertices[3].position, rotationMatrixColB);
-            Vertices[3].position[0] = x;
-            Vertices[3].position[1] = y;
-            break;
-        default:
-            printf("Something went wrong when trying to rotate.\n");
-            break;
+        x = v3_dot(Vertices[3].position, rotationMatrixColA);
+        y = v3_dot(Vertices[3].position, rotationMatrixColB);
+        Vertices[3].position[0] = x;
+        Vertices[3].position[1] = y;
+        break;
+    default:
+        printf("Something went wrong when trying to rotate.\n");
+        break;
     }
 }
 
@@ -343,31 +357,31 @@ void scaleImage(int direction)
 {
     switch(direction)
     {
-        case 0:
-            printf("You pressed A key.\n");
-            Vertices[0].position[0] *= 1.1;
-            Vertices[0].position[1] *= 1.1;
-            Vertices[1].position[0] *= 1.1;
-            Vertices[1].position[1] *= 1.1;
-            Vertices[2].position[0] *= 1.1;
-            Vertices[2].position[1] *= 1.1;
-            Vertices[3].position[0] *= 1.1;
-            Vertices[3].position[1] *= 1.1;
-            break;
-        case 1:
-            printf("You pressed S key.\n");
-            Vertices[0].position[0] *= 1/1.1;
-            Vertices[0].position[1] *= 1/1.1;
-            Vertices[1].position[0] *= 1/1.1;
-            Vertices[1].position[1] *= 1/1.1;
-            Vertices[2].position[0] *= 1/1.1;
-            Vertices[2].position[1] *= 1/1.1;
-            Vertices[3].position[0] *= 1/1.1;
-            Vertices[3].position[1] *= 1/1.1;
-            break;
-        default:
-            printf("Something went wrong when trying to scale.\n");
-            break;
+    case 0:
+        printf("You pressed A key.\n");
+        Vertices[0].position[0] *= 1.1;
+        Vertices[0].position[1] *= 1.1;
+        Vertices[1].position[0] *= 1.1;
+        Vertices[1].position[1] *= 1.1;
+        Vertices[2].position[0] *= 1.1;
+        Vertices[2].position[1] *= 1.1;
+        Vertices[3].position[0] *= 1.1;
+        Vertices[3].position[1] *= 1.1;
+        break;
+    case 1:
+        printf("You pressed S key.\n");
+        Vertices[0].position[0] *= 1/1.1;
+        Vertices[0].position[1] *= 1/1.1;
+        Vertices[1].position[0] *= 1/1.1;
+        Vertices[1].position[1] *= 1/1.1;
+        Vertices[2].position[0] *= 1/1.1;
+        Vertices[2].position[1] *= 1/1.1;
+        Vertices[3].position[0] *= 1/1.1;
+        Vertices[3].position[1] *= 1/1.1;
+        break;
+    default:
+        printf("Something went wrong when trying to scale.\n");
+        break;
     }
 }
 
@@ -375,19 +389,19 @@ void shearImage(int direction)
 {
     switch(direction)
     {
-        case 0:
-            printf("You pressed X key.\n");
-            Vertices[2].position[0] += 0.1;
-            Vertices[1].position[0] += 0.1;
-            break;
-        case 1:
-            printf("You pressed Z key.\n");
-            Vertices[2].position[0] -= 0.1;
-            Vertices[1].position[0] -= 0.1;
-            break;
-        default:
-            printf("Something went wrong when trying to shear.\n");
-            break;
+    case 0:
+        printf("You pressed X key.\n");
+        Vertices[2].position[0] += 0.1;
+        Vertices[1].position[0] += 0.1;
+        break;
+    case 1:
+        printf("You pressed Z key.\n");
+        Vertices[2].position[0] -= 0.1;
+        Vertices[1].position[0] -= 0.1;
+        break;
+    default:
+        printf("Something went wrong when trying to shear.\n");
+        break;
     }
 }
 
