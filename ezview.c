@@ -24,7 +24,7 @@ FILE* inputfp;
 int width, height, maxcv; //global variables to store header information
 GLFWwindow* window;
 
-
+//data type to store vertex data
 typedef struct
 {
     float position[3];
@@ -32,7 +32,7 @@ typedef struct
     float textcoord[2];
 } Vertex;
 
-
+//list of vertexes to store triangle information
 Vertex Vertices[] =
 {
     {{1, -1, 0},  {1, 0, 0, 1}, {0.99999,0.99999}},
@@ -41,13 +41,12 @@ Vertex Vertices[] =
     {{-1, -1, 0}, {0, 0, 0, 1}, {0,0.99999}}
 };
 
-
+//mapping vertexes into two triangles
 const GLubyte Indices[] =
 {
     0, 1, 2,
     2, 3, 0
 };
-
 
 char* vertex_shader_src =
     "attribute vec4 Position;\n"
@@ -64,7 +63,6 @@ char* vertex_shader_src =
     "    gl_Position = Position;\n"
     "}\n";
 
-
 char* fragment_shader_src =
     "varying lowp vec4 DestinationColor;\n"
     "\n"
@@ -75,7 +73,7 @@ char* fragment_shader_src =
     "    gl_FragColor = texture2D(Texture, TexCoordOut);\n"
     "}\n";
 
-
+//simple_shader compiles an input shader and returns that shader's id if compilation was successful
 GLint simple_shader(GLint shader_type, char* shader_src)
 {
 
@@ -205,18 +203,14 @@ int read_p3(Pixel* image)
     return 1;
 }
 
+//simple_program attempts to link the shaders to the program and returns the program id if successful
 int simple_program()
 {
-
     GLint link_success = 0;
 
     GLint program_id = glCreateProgram();
     GLint vertex_shader = simple_shader(GL_VERTEX_SHADER, vertex_shader_src);
     GLint fragment_shader = simple_shader(GL_FRAGMENT_SHADER, fragment_shader_src);
-
-
-
-
 
     glAttachShader(program_id, vertex_shader);
     glAttachShader(program_id, fragment_shader);
@@ -236,12 +230,13 @@ int simple_program()
     return program_id;
 }
 
-
+//error_callback
 static void error_callback(int error, const char* description)
 {
     fputs(description, stderr);
 }
 
+//the pan function pans the textured triangles based on an input to decide which direction to pan in
 void pan(int direction)
 {
     switch(direction)
@@ -280,28 +275,33 @@ void pan(int direction)
     }
 }
 
+//the 3-dimensional float vector V3 is necessary for the dot operation inline function
 typedef float* V3;
+//the dot operation inline function is necessary for rotation calculation.
+//it calculates the dot product of two input vectors and returns it.
 static inline float v3_dot(V3 a, V3 b)
 {
     return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
 }
 
+//rotateImage rotates the textured triangles by 22.5 degrees per keypress
+//in the direction specified in the input parameter.
 void rotateImage(int direction)
 {
-    float theta = 22.5*(PI/180);
-    float x, y;
-    float rotationMatrixColA[3] = {cos(theta), sin(theta), 0};
-    float rotationMatrixColB[3] = {-sin(theta), cos(theta), 0};
+    float theta = 22.5*(PI/180); //convert degrees to radians and store the computed value
+    float x, y;                  //temporary variables to prevent premature modification of vertex positions
+    float rotationMatrixColA[3] = {cos(theta), sin(theta), 0};  //column A of the rotation matrix about the z-axis
+    float rotationMatrixColB[3] = {-sin(theta), cos(theta), 0}; //column B of the rotation matrix about the z-axis
 
 
     switch(direction)
     {
     case 0:
         printf("You pressed W key.\n");
-        x = v3_dot(Vertices[0].position, rotationMatrixColA);
-        y = v3_dot(Vertices[0].position, rotationMatrixColB);
-        Vertices[0].position[0] = x;
-        Vertices[0].position[1] = y;
+        x = v3_dot(Vertices[0].position, rotationMatrixColA); //store the new x-value from the dot product of the existing position and rotation matrix
+        y = v3_dot(Vertices[0].position, rotationMatrixColB); //store the new y-value
+        Vertices[0].position[0] = x; //assign the new x value to the proper vertex x-position
+        Vertices[0].position[1] = y; //assign the new y value to the proper vertex y-position
 
         x = v3_dot(Vertices[1].position, rotationMatrixColA);
         y = v3_dot(Vertices[1].position, rotationMatrixColB);
@@ -321,13 +321,13 @@ void rotateImage(int direction)
         break;
     case 1:
         printf("You pressed Q key.\n");
-        theta = -theta;
-        rotationMatrixColA[0] = cos(theta);
+        theta = -theta; //a negative theta is required for rotations in the opposite direction
+        rotationMatrixColA[0] = cos(theta); //recalculate the values of the rotation matrices
         rotationMatrixColA[1] = sin(theta);
         rotationMatrixColB[0] = -sin(theta);
         rotationMatrixColB[1] = cos(theta);
 
-        x = v3_dot(Vertices[0].position, rotationMatrixColA);
+        x = v3_dot(Vertices[0].position, rotationMatrixColA); //repeat the same process as earlier to rotate the vertices
         y = v3_dot(Vertices[0].position, rotationMatrixColB);
         Vertices[0].position[0] = x;
         Vertices[0].position[1] = y;
@@ -353,6 +353,8 @@ void rotateImage(int direction)
     }
 }
 
+//scaleImage scales the textured polygons uniformly by 10% with each keypress.
+//scaling up or down is determined by the input parameter.
 void scaleImage(int direction)
 {
     switch(direction)
@@ -385,6 +387,9 @@ void scaleImage(int direction)
     }
 }
 
+//shearImage shears the textured polygons left and right in accordance with
+//the top of the original orientation of the vertices.
+//Whether the textured polygons are sheared left or right is determined by the input parameter.
 void shearImage(int direction)
 {
     switch(direction)
@@ -405,6 +410,8 @@ void shearImage(int direction)
     }
 }
 
+//the function key_callback checks to see if a key was pressed that triggers the calling
+//of a particular function and which direction that function should transform the image in.
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
@@ -427,15 +434,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         shearImage(0);
     else if (key == GLFW_KEY_X && action == GLFW_PRESS)
         shearImage(1);
-    else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) //escape exits the program
     {
         printf("closing...");
         glfwTerminate();
         exit(EXIT_SUCCESS);
     }
-    else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) //spacebar resets the vertices
     {
-        printf("Resetting vertices...");
+        printf("Resetting vertices...\n");
         Vertices[0].position[0] = 1;
         Vertices[0].position[1] = -1;
         Vertices[1].position[0] = 1;
@@ -499,7 +506,7 @@ int main(int argc, char* argv[])
     glfwMakeContextCurrent(window);
 
 
-
+    //generate the texture, bind it, define its mipmap filtering, and store the p3 image data in the texture
     GLuint myTexture;
     glGenTextures(1, &myTexture);
     glBindTexture(GL_TEXTURE_2D, myTexture);
@@ -513,6 +520,7 @@ int main(int argc, char* argv[])
 
     glUseProgram(program_id);
 
+    //put the position and sourcecolor attributes into slots and ensure this was successful
     position_slot = glGetAttribLocation(program_id, "Position");
     color_slot = glGetAttribLocation(program_id, "SourceColor");
     assert(position_slot != -1);
@@ -520,7 +528,7 @@ int main(int argc, char* argv[])
     glEnableVertexAttribArray(position_slot);
     glEnableVertexAttribArray(color_slot);
 
-
+    //put the texture coordinates and texture into slots and ensure this was successful
     GLint texCoordSlot = glGetAttribLocation(program_id, "TexCoordIn");
     assert(texCoordSlot != -1);
     glEnableVertexAttribArray(texCoordSlot);
@@ -541,15 +549,17 @@ int main(int argc, char* argv[])
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
 
-    // Repeat
+    // Repeat for as long as the program should stay open
     while (!glfwWindowShouldClose(window))
     {
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 
+        //background of the program defaults to hot pink
         glClearColor(255.0/255.0, 20.0/255.0, 147.0/255.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        //set the viewport width and height
         glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         glVertexAttribPointer(position_slot,
@@ -566,7 +576,13 @@ int main(int argc, char* argv[])
                               sizeof(Vertex),
                               (GLvoid*) (sizeof(float) * 3));
 
-        glVertexAttribPointer(texCoordSlot, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), sizeof(float)*7);
+        glVertexAttribPointer(texCoordSlot,
+                              2,
+                              GL_FLOAT,
+                              GL_FALSE,
+                              sizeof(Vertex),
+                              sizeof(float)*7);
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, myTexture);
         glUniform1i(textureUniform, 0);
@@ -574,11 +590,13 @@ int main(int argc, char* argv[])
                        sizeof(Indices) / sizeof(GLubyte),
                        GL_UNSIGNED_BYTE, 0);
 
+        //swap the buffers of what to show on screen, check for keypresses, and poll events
         glfwSwapBuffers(window);
         glfwSetKeyCallback(window, key_callback);
         glfwPollEvents();
     }
 
+    //end the program
     glfwDestroyWindow(window);
     glfwTerminate();
     exit(EXIT_SUCCESS);
